@@ -1,0 +1,36 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+     - name: create a appserver dir
+       command: mkdir appserver
+      
+     - name: change ownership for appserver dir
+       command: chown -R root:root /root/appserver
+   
+     - name: copy file from ansible-master to node
+       copy:
+         src: /tmp/geckodriver.tar
+         dest: /root/appserver/geckodriver.tar
+
+     - name: create a appserver dir
+       command: chmod 777 /root/appserver/geckodriver.tar
+     
+     - name: change the ownership of tar file
+       command: chown -R root:root /root/appserver/geckodriver.tar
+
+     - name: Unarchive the tar file
+       unarchive:
+         src: /root/appserver/geckodriver.tar
+         dest: /root/appserver
+         remote_src: yes
+       register: geeko_binaries
+
+     - name: change the owner permissions
+       command: chown -R root:root /root/appserver/geckodriver
+
+#     - name: check the geeko is installed 
+#       command: ./geckodriver --version
+#       args:
+#         creates: /root/appserver
+

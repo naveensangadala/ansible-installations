@@ -1,0 +1,98 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+#     - name: create a appserver dir
+#       command: mkdir appserver
+      
+#     - name: change ownership for appserver dir
+#       command: chown -R root:root /root/appserver
+   
+     - name: copy file from ansible-master to node
+       copy:
+         src: /tmp/firefox-52.2.0esr.tar.bz2
+         dest: /root/appserver/firefox-52.2.0esr.tar.bz2
+
+     - name: create a appserver dir
+       command: chmod 777 /root/appserver/firefox-52.2.0esr.tar.bz2
+     
+     - name: change the ownership of tar file
+       command: chown -R root:root /root/appserver/firefox-52.2.0esr.tar.bz2
+
+#     - name: unarchive the tar file
+#       command: tar xvjf /root/appserver/firefox-52.2.0esr.tar.bz2
+#       command: gtar -xf /root/appserver/firefox-52.2.0esr.tar.bz2   
+ 
+     - name: Unarchive the tar file
+       unarchive:
+         src: /root/appserver/firefox-52.2.0esr.tar.bz2
+         dest: /root/appserver
+         remote_src: yes
+#         extra_opts: [--strip-components=1]
+       register: firefox_binaries
+
+     - name: change the owner permissions
+       command: chown -R root:root /root/appserver/firefox-52.2.0esr.tar.bz2
+
+     - name: moving firefox do opt  
+       command: mv /root/appserver/firefox/ /opt
+ 
+#     - name: 
+#       command: cd /opt
+
+#     - name: 
+#       command: ls -ld /opt/firefox/
+
+     - name: install firefox
+       yum:
+         name: firefox
+         state: latest
+
+#     - name: install firefox
+#       yum:
+#         name: libgtk-x11
+#         state: latest
+
+#     - name: install firefox
+#       yum:
+#         name: gtk2
+#         state: latest
+
+#     - name: ensure a list of packages installed
+#       yum:
+#         name: "{{ packages }}"
+#       vars:
+#         packages:
+#           - firfox
+#           - libgtk-x11
+#           - gtk2
+
+#     - name: 
+#       command: ls -ld /usr/bin/firefox
+
+     - name: creating softlink
+       command: ln -sf /opt/firefox/firefox /usr/bin/firefox
+
+     - name: check the firefox is installed 
+       command: firefox -v 
+       register: firefox_version
+ 
+     - name: firefox version   
+       debug: 
+         msg: "firefox version is:{{firefox_version.stdout_lines}}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
