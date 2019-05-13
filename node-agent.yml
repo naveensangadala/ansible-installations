@@ -1,0 +1,17 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+     - name: change ownership for /mr dir
+       command: chown -R asadmin:asadmin /root/mr
+   
+     - name: execute nodeAgentBootStrap.sh
+       shell: ./nodeAgentBootStrap.sh
+       args:
+          chdir: /tools/mtt/infra/nodeagent
+
+     - name: execute startServer.sh
+       shell: ./startServer.sh
+       args:
+          chdir: /appserver/nodeagent/bin
+

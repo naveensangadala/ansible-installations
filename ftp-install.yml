@@ -1,0 +1,34 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+     - name: grep ftp details
+       command: rpm -qa |grep -i ftp
+   
+     - name: list the yum pacakges for ftp
+       command: rpm -qa |grep -i ftp
+
+     - name: install common software requirements
+      yum:
+        name:
+          - ftp
+          - vsftp
+        state: present
+  
+     - name: check vsftpd status
+       command: service vsftpd.service status
+
+     - name: restart vsftpd
+       become: yes
+       service: name=vsftpd  state=restarted
+
+     - name: check vsftpd status
+       command: service vsftpd.service status
+
+
+     - name: check vsftpd status
+       command: /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+     - name: restart vsftpd
+       become: yes
+       service: name=vsftpd  state=restarted

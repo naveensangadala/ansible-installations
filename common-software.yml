@@ -1,0 +1,14 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+    - name: install common software requirements
+      yum:
+        name: 
+          - git
+          - vim
+          - unzip
+          - curl
+          - wget
+          - httpd
+        state: present  

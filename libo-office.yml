@@ -1,0 +1,137 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+     - name: create a appserver dir
+       command: mkdir /opt/libo
+
+     - name: create a appserver dir
+       command: chmod -R 777 /opt/libo
+      
+     - name: copy file from ansible-master to node
+       copy:
+         src: /tmp/LibO_3.3.0_Linux_x86-64_install-rpm_en-US.tar.gz
+         dest: /opt/libo
+
+     - name: create a appserver dir
+       command: chmod 777 /opt/libo/LibO_3.3.0_Linux_x86-64_install-rpm_en-US.tar.gz
+     
+     - name: Unarchive the tar file
+       unarchive:
+         src: /opt/libo/LibO_3.3.0_Linux_x86-64_install-rpm_en-US.tar.gz
+         dest: /opt/libo
+         remote_src: yes
+       register: libo__binaries
+
+     - name: copy .rpm files to root
+       command: cp -R /opt/libo/LibO_3.3.0rc4_Linux_x86-64_install-rpm_en-US/RPMS/ /
+       
+#     - name: find .rpm files
+#       find:  paths="/opt/libo/LibO_3.3.0rc4_Linux_x86-64_install-rpm_en-US/RPMS/" recurse=yes patterns=".rpm"
+#       register: find_files
+  
+#     - name: set fact
+#       set_fact:
+#         all_files:
+#           - "{{ find_files.files | map(attribute='path') | list }}"
+#       when: find_files > 0
+
+#     - name: copy files
+#       copy:
+#         src: "{{ item }}"
+#         dest: /root
+#       with_items: "{{ all_files }}"
+#       when: find_files > 0      
+   
+#     - copy:
+#         src: "{{ item }}"
+#         dest: /root
+#       with_lines: "find /opt/libo/LibO_3.3.0rc4_Linux_x86-64_install-rpm_en-US/RPMS/ -type f -name *.rpm "
+
+#     - synchronize:
+#         src: "{{ item }}"
+#         dest: /root
+#       with_lines: "find /opt/libo/LibO_3.3.0rc4_Linux_x86-64_install-rpm_en-US/RPMS/ -type f -name *.rpm "
+#         rsync_opts: 
+#           - --include=*.rpm
+
+#     - name: copy .rpm files to root
+#       copy:
+#         src: /opt/libo/LibO_3.3.0rc4_Linux_x86-64_install-rpm_en-US/RPMS/
+#         dest: /root
+#         remote_src: yes
+#         directory_mode: yes
+#       with_items: "{{ /opt/libo/LibO_3.3.0rc4_Linux_x86-64_install-rpm_en-US/RPMS/*.rpm }}"
+       register: rpm_files_check 
+        
+    
+     - name: execute the rpm commands over the root
+       command: 
+#       become: true
+#       become_user: root
+       args:
+         chdir: /RPMS
+         argv:         
+           - rpm2cpio libobasis3.3-base-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-binfilter-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-calc-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-core01-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-core02-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-core03-3.3.0-6.x86_64.rpm | cpio -idmv
+           - libobasis3.3-core04-3.3.0-6.x86_64.rpm | cpio -idmv
+           - libobasis3.3-core05-3.3.0-6.x86_64.rpm | cpio -idmv
+           - libobasis3.3-core06-3.3.0-6.x86_64.rpm | cpio -idmv
+           - libobasis3.3-core07-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-draw-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-base-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-binfilter-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-calc-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-math-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-res-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-writer-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-en-US-writer-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-extension-mediawiki-publisher-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-extension-nlpsolver-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-extension-pdf-import-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-extension-presentation-minimizer-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-extension-presenter-screen-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-extension-report-builder-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-gnome-integration-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-graphicfilter-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-images-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-impress-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-javafilter-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-kde-integration-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-math-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-ogltrans-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-ooofonts-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-ooolinguistic-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-pyuno-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-testtool-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-testtool-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-writer-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libobasis3.3-xsltfilter-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-base-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-calc-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-dict-en-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-dict-es-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-dict-fr-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-draw-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-en-US-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-impress-3.3.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-math-3.3.0-6.x86_64.rpm | cpio -idmv
+           - libreoffice3-ure-1.7.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-ure-1.7.0-6.x86_64.rpm | cpio -idmv
+           - rpm2cpio libreoffice3-writer-3.3.0-6.x86_64.rpm | cpio -idmv
+
+
+
+
+
+
+
+
+
+

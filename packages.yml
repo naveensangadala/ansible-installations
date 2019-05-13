@@ -1,0 +1,18 @@
+---
+- hosts: test-node
+  gather_facts: yes
+  tasks:
+#    - name:
+#      command: yum install xorg-x11-server-Xvfb.x86_64
+
+#    - name:
+#      command: yum install firefox-52.2.0-1.0.1.el7_3.x86_64
+
+    - name: install common software requirements
+      yum:
+        name: 
+#          - xorg-x11-server-Xvfb.x86_64
+#          - firefox-52.2.0-1.0.1.el7_3.x86_64
+          - vsftpd
+          - ftp
+        state: present  
